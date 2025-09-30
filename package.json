@@ -1,6 +1,6 @@
 {
   "name": "@tecocraft/rn-deeplinking",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Manage deep links (Android app links + iOS universal links) in React Native projects with a simple API.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
