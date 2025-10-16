@@ -1,15 +1,14 @@
 import { useEffect } from "react";
 import { ISmartLinkingOptions } from "./types";
 import { extractShortCode, fetchDynamicLink } from "./utils";
-import { Linking, Platform } from "react-native";
+import { Linking } from "react-native";
 
 export function useSmartLinking(options: ISmartLinkingOptions = {}) {
     const {
         onSuccess,
         onError,
         onFallback,
-        onUrl,
-        autoOpenFallback = true,
+        onUrl
     } = options;
 
     useEffect(() => {
@@ -21,25 +20,6 @@ export function useSmartLinking(options: ISmartLinkingOptions = {}) {
             try {
                 const data = await fetchDynamicLink(shortCode);
                 onSuccess?.(data);
-
-                // fallback handling
-                let fallbackUrl: string | null = null;
-                if (Platform.OS === "android") {
-                    fallbackUrl = data.androidFallbackUrl;
-                } else if (Platform.OS === "ios") {
-                    fallbackUrl = data.iosFallbackUrl;
-                } else {
-                    fallbackUrl = data.desktopFallbackUrl;
-                }
-
-                if (fallbackUrl) {
-                    onFallback?.(fallbackUrl);
-                    if (autoOpenFallback) {
-                        await Linking.openURL(fallbackUrl).catch(() => {
-                            onError?.(new Error("Failed to open fallback URL"));
-                        });
-                    }
-                }
             } catch (err) {
                 onError?.(err as Error);
             }
@@ -57,5 +37,5 @@ export function useSmartLinking(options: ISmartLinkingOptions = {}) {
 
         return () => sub.remove();
 
-    }, [onSuccess, onError, onFallback, onUrl, autoOpenFallback]);
+    }, [onSuccess, onError, onFallback, onUrl]);
 }

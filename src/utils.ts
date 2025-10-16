@@ -1,36 +1,5 @@
 import { getApiBaseUrl } from './constants';
-import { IDynamicLinkResponse, IResolveOptions } from './types';
-import { Platform, Linking } from 'react-native';
-
-export async function resolveDynamicLink(
-  url: string,
-  options: IResolveOptions = {},
-): Promise<IDynamicLinkResponse | null> {
-  const { autoOpenFallback = true } = options;
-  const shortCode = extractShortCode(url);
-  if (!shortCode) return null;
-
-  const data = await fetchDynamicLink(shortCode);
-  // auto-open fallback if required
-  let fallbackUrl: string | null = null;
-  if (Platform.OS === 'android') {
-    fallbackUrl = data.androidFallbackUrl;
-  } else if (Platform.OS === 'ios') {
-    fallbackUrl = data.iosFallbackUrl;
-  } else {
-    fallbackUrl = data.desktopFallbackUrl;
-  }
-
-  if (fallbackUrl && autoOpenFallback) {
-    try {
-      await Linking.openURL(fallbackUrl);
-    } catch {
-      console.warn('Failed to open fallback URL');
-    }
-  }
-
-  return data;
-}
+import { IDynamicLinkResponse } from './types';
 
 export async function fetchDynamicLink(
   shortCode: string,

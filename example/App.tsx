@@ -18,7 +18,6 @@ const App = () => {
     onError: (err) => {
       console.warn('Deep link error:', err.message);
     },
-    // autoOpenFallback: true (default)
   });
 
   // useEffect(() => {

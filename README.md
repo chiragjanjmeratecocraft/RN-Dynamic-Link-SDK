@@ -107,7 +107,6 @@ export default function App() {
     onError: (err) => {
       console.warn('Deep link error:', err.message);
     },
-    // autoOpenFallback: true (default)
   });
 
   return (
@@ -346,7 +345,6 @@ For App Links/Universal Links with Expo, also configure:
     - `onSuccess?: (data: IDynamicLinkResponse) => void`
     - `onFallback?: (url: string) => void`
     - `onError?: (err: Error) => void`
-    - `autoOpenFallback?: boolean` (default `true`)
 
 <!-- Internal utils/constants are intentionally not documented in the public API. -->
 
@@ -356,7 +354,7 @@ For App Links/Universal Links with Expo, also configure:
   - `{ title, description, longUrl, androidFallbackUrl, iosFallbackUrl, desktopFallbackUrl, customParams, customDomain, shortCode }`
 
 - `ISmartLinkingOptions`
-  - `{ onUrl?, onSuccess?, onFallback?, onError?, autoOpenFallback? }`
+  - `{ onUrl?, onSuccess?, onFallback?, onError? }`
 
 <!-- Internal types (for utils) are intentionally not documented. -->
 
