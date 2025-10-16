@@ -22,14 +22,4 @@ export interface ISmartLinkingOptions {
 
 export interface IResolveOptions {
     autoOpenFallback?: boolean;
-    /**
-     * Optional override for the API base URL used to resolve links.
-     * If omitted, the library's configured base URL will be used.
-     */
-    baseUrl?: string;
-    /**
-     * Optional timeout (ms) for the network request. Defaults to 10000ms.
-     */
-    timeoutMs?: number;
-
 }

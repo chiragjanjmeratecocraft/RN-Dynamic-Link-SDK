@@ -3,11 +3,11 @@ import { IDynamicLinkResponse, IResolveOptions } from './types';
 import { Platform, Linking } from 'react-native';
 
 export async function resolveDynamicLink(url: string, options: IResolveOptions = {}): Promise<IDynamicLinkResponse | null> {
-    const { autoOpenFallback = true, baseUrl, timeoutMs = 10000 } = options;
+    const { autoOpenFallback = true } = options;
     const shortCode = extractShortCode(url);
     if (!shortCode) return null;
 
-    const data = await fetchDynamicLink(shortCode, { baseUrl, timeoutMs });
+    const data = await fetchDynamicLink(shortCode);
     // auto-open fallback if required
     let fallbackUrl: string | null = null;
     if (Platform.OS === "android") {
@@ -45,14 +45,13 @@ export function normalizeResponse(apiResponse: any): IDynamicLinkResponse {
 }
 
 
-export async function fetchDynamicLink(shortCode: string, opts: { baseUrl?: string; timeoutMs?: number } = {}): Promise<IDynamicLinkResponse> {
+export async function fetchDynamicLink(shortCode: string): Promise<IDynamicLinkResponse> {
 
-    const { baseUrl, timeoutMs = 10000 } = opts;
     const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeoutMs);
+    const id = setTimeout(() => controller.abort(), 10000);
 
     try {
-        const base = baseUrl || getApiBaseUrl();
+        const base = getApiBaseUrl();
         const res = await fetch(`${base}/${encodeURIComponent(shortCode)}`, { signal: controller.signal });
         if (!res.ok) throw new Error(`API Error: ${res.status}`);
         const data = await res.json();
