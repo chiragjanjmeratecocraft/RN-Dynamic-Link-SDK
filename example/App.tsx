@@ -1,37 +1,53 @@
-import { View, Text, StyleSheet } from 'react-native'
-import React, { useEffect } from 'react'
-import { Deeplink, useSmartLinking } from '@tecocraft/rn-deeplinking';
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ */
 
-const App = () => {
+import { useSmartLinking } from '@tecocraft/rn-deeplinking';
+import { NewAppScreen } from '@react-native/new-app-screen';
+import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
+function App() {
+  const isDarkMode = useColorScheme() === 'dark';
 
   useSmartLinking({
-    onUrl: (url) => {
-      console.log('URL received:', url);
+    onUrl(url) {
+      console.log('Received URL:', url);
     },
-    onSuccess: (data) => {
-      // `data` is a normalized dynamic link response
-      console.log('Resolved link:', data);
+    onSuccess(data) {
+      console.log('Deep link data:', data);
     },
-    onFallback: (fallbackUrl) => {
-      console.log('Will open fallback:', fallbackUrl);
+    onFallback(url) {
+      console.warn('No deep link matched for URL:', url);
     },
-    onError: (err) => {
-      console.warn('Deep link error:', err.message);
+    onError(error) {
+      console.error('Deep link error:', error);
     },
   });
 
-  // useEffect(() => {
-  //   const unsubscribe = Deeplink.addListener((url) => {
-  //     console.log('Opened via link:', url);
-  //     // Handle your deep link logic here
-  //   });
+  return (
+    <SafeAreaProvider>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <AppContent />
+    </SafeAreaProvider>
+  );
+}
 
-  //   return () => unsubscribe();
-  // }, []);
+function AppContent() {
+  const safeAreaInsets = useSafeAreaInsets();
 
   return (
     <View style={styles.container}>
-      <Text>Deep Linking Example</Text>
+      <NewAppScreen
+        templateFileName="App.tsx"
+        safeAreaInsets={safeAreaInsets}
+      />
     </View>
   );
 }
@@ -39,8 +55,6 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
   },
 });
 
