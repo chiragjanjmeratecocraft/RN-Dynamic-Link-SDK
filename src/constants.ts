@@ -1,14 +1,12 @@
-// Default backend URL. Consumers can override at runtime using setApiBaseUrl().
+export const BASE_URL = "https://backend-dynamiclink.tecocraft.us/api/links";
 
-export const DEFAULT_API_BASE_URL = "https://backend-dynamiclink.tecocraft.us/api/links/code";
-
-let apiBaseUrl = DEFAULT_API_BASE_URL;
-
-export function setApiBaseUrl(url: string) {
-    if (typeof url !== 'string' || !url.trim()) return;
-    apiBaseUrl = url.trim();
+export const API_ROUTES = {
+    GET_DETAILS: "/code",
+    PENDING_REDIRECT: "/pending-redirect",
 }
 
-export function getApiBaseUrl(): string {
-    return apiBaseUrl;
+export const TIMEOUT_DURATION = 10000;
+export const STORAGE_KEYS = {
+    HAS_LAUNCHED: 'hasLaunched',
+    DYNAMIC_LINK: 'dynamicLink',
 }
