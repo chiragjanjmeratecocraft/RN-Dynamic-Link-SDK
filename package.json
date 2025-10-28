@@ -19,9 +19,7 @@
     "lint": "eslint src --ext .ts,.tsx",
     "type-check": "tsc --noEmit",
     "test": "jest",
-    "dev": "tsup src/index.ts --format esm,cjs --watch",
-    "prepublishOnly": "npm run codegen:android",
-    "codegen:android": "react-native-codegen generate-specs --platform android --output android/src/main/java/com/rndynamiclinking/ --libraryName RNDynamicLinking --schemaPath src/specs"
+    "dev": "tsup src/index.ts --format esm,cjs --watch"
   },
   "keywords": [
     "react-native",
