@@ -2,20 +2,22 @@ import { useEffect } from 'react';
 import { InstallReferrerResult, ISmartLinkingOptions } from './types';
 import { extractShortCode, fetchDynamicLink } from './utils';
 import { Linking } from 'react-native';
-import RNDynamicLinking from './specs/NativeRNDynamicLinkingSpec';
+import { Platform, NativeModules } from 'react-native';
+const { RNDynamicLinking } = NativeModules;
 
 export function useSmartLinking(options: ISmartLinkingOptions = {}) {
   const { onSuccess, onError, onFallback, onUrl } = options;
 
   useEffect(() => {
+    if (Platform.OS !== 'android') return;
     (() => {
-      RNDynamicLinking.getInstallReferrer()
-      .then((result : InstallReferrerResult) => {
-        console.log("RNDynamicLinking", result);
-      })
-      .catch((err) => {
-        console.warn('Install referrer failed:', err);
-      });
+      RNDynamicLinking?.getInstallReferrer?.()
+        .then((result: InstallReferrerResult) => {
+          console.log('RNDynamicLinking', result);
+        })
+        .catch((err: any) => {
+          console.warn('Install referrer failed:', err);
+        });
     })();
   }, []);
 
