@@ -8,13 +8,13 @@ import com.facebook.react.module.annotations.ReactModule
 
 @ReactModule(name = RNDynamicLinkingModule.NAME)
 class RNDynamicLinkingModule(reactContext: ReactApplicationContext) :
-    NativeRNDynamicLinkingSpec(reactContext) {
+    ReactContextBaseJavaModule(reactContext) {
 
     private var referrerClient: InstallReferrerClient? = null
 
     override fun getName(): String = NAME
 
-    override fun getInstallReferrer(promise: Promise) {
+    fun getInstallReferrer(promise: Promise) {
         val context = reactApplicationContext
 
         referrerClient = InstallReferrerClient.newBuilder(context).build()
