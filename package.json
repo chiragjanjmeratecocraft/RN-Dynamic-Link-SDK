@@ -6,7 +6,13 @@
   "types": "./lib/index.d.ts",
   "files": [
     "src",
-    "lib"
+    "lib",
+    "android",
+    "!android/build",
+    "!android/gradle",
+    "!android/gradlew",
+    "!android/gradlew.bat",
+    "!android/local.properties"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -56,8 +62,8 @@
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
-    "react": ">=17.0.0",
-    "react-native": ">=0.64.0"
+    "react": "*",
+    "react-native": "*"
   },
   "jest": {
     "preset": "react-native",
@@ -70,8 +76,17 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
-  "dependencies": {
-    "@react-native-async-storage/async-storage": "^2.2.0"
+  "codegenConfig": {
+    "name": "RNDynamicLinkingSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.rndynamiclinking"
+    }
+  },
+  "create-react-native-library": {
+    "languages": "kotlin-objc",
+    "type": "turbo-module",
+    "version": "0.54.8"
   }
 }
