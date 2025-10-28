@@ -47,6 +47,10 @@
     ".": {
       "types": "./lib/index.d.ts",
       "default": "./lib/index.js"
+    },
+    "./useSmartLinking": {
+      "types": "./lib/useSmartLinking.d.ts",
+      "default": "./lib/useSmartLinking.js"
     }
   },
   "devDependencies": {
