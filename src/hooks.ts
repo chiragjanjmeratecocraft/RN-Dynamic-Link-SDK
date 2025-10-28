@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import type { ISmartLinkingOptions } from './types/common';
 import { extractShortCode, fetchDynamicLink } from './utils';
 import { Linking, Platform } from 'react-native';
-import type { InstallReferrerResult, RNDynamicLinkingNativeModule } from './types/native';
+import type { RNDynamicLinkingNativeModule } from './types/native';
 import { NativeModules } from 'react-native';
 
 const { RNDynamicLinking } = NativeModules as {
@@ -15,8 +15,8 @@ export function useSmartLinking(options: ISmartLinkingOptions = {}) {
   useEffect(() => {
     if (Platform.OS !== 'android') return;
     (() => {
-      RNDynamicLinking?.getInstallReferrer()
-        .then((result: InstallReferrerResult) => {
+      RNDynamicLinking?.getReferralCode()
+        .then((result: string | null) => {
           console.log('RNDynamicLinking', result);
         })
         .catch((err: any) => {

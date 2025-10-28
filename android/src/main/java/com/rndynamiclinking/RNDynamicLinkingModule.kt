@@ -1,9 +1,11 @@
 package com.rndynamiclinking
 
-import android.util.Log
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
-import com.facebook.react.bridge.*
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.module.annotations.ReactModule
 
 @ReactModule(name = RNDynamicLinkingModule.NAME)
@@ -11,11 +13,19 @@ class RNDynamicLinkingModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
 
     private var referrerClient: InstallReferrerClient? = null
+    private var hasFetched = false
 
     override fun getName(): String = NAME
 
     @ReactMethod
-    fun getInstallReferrer(promise: Promise) {
+    fun getReferralCode(promise: Promise) {
+        // Prevent duplicate calls
+        if (hasFetched) {
+            promise.resolve(null)
+            return
+        }
+
+        hasFetched = true
         val context = reactApplicationContext
 
         referrerClient = InstallReferrerClient.newBuilder(context).build()
@@ -24,37 +34,24 @@ class RNDynamicLinkingModule(reactContext: ReactApplicationContext) :
                 when (responseCode) {
                     InstallReferrerClient.InstallReferrerResponse.OK -> {
                         try {
-                            val response = referrerClient?.installReferrer
-                            val rawReferrer = response?.installReferrer ?: ""
-
-                            // Parse utm_campaign
-                            val utmCampaign = rawReferrer
-                                .split("&")
-                                .find { it.startsWith("utm_campaign=") }
-                                ?.substringAfter("=")
-
-                            // Return structured object to JS
-                            val result = Arguments.createMap().apply {
-                                putString("raw", rawReferrer)
-                                putString("utmCampaign", utmCampaign)
-                            }
-
-                            promise.resolve(result)
-                            referrerClient?.endConnection()
+                            val raw = referrerClient?.installReferrer?.installReferrer.orEmpty()
+                            val code = if (raw.isNotBlank()) raw else null
+                            promise.resolve(code)
                         } catch (e: Exception) {
-                            promise.reject("REFERRER_ERROR", e)
+                            promise.resolve(null)
+                        } finally {
+                            referrerClient?.endConnection()
+                            referrerClient = null
                         }
                     }
                     else -> {
-                        promise.reject("REFERRER_UNAVAILABLE", "Response code: $responseCode")
+                        promise.resolve(null)
                         referrerClient?.endConnection()
                     }
                 }
             }
 
-            override fun onInstallReferrerServiceDisconnected() {
-                // Optional: retry logic
-            }
+            override fun onInstallReferrerServiceDisconnected() {}
         })
     }
 
