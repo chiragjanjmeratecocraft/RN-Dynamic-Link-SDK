@@ -1,6 +1,6 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
-import type { InstallReferrerResult } from '../types';
+import { InstallReferrerResult } from '../types/native';
 
 export interface Spec extends TurboModule {
   getInstallReferrer(): Promise<InstallReferrerResult>;

@@ -14,6 +14,7 @@ class RNDynamicLinkingModule(reactContext: ReactApplicationContext) :
 
     override fun getName(): String = NAME
 
+    @ReactMethod
     fun getInstallReferrer(promise: Promise) {
         val context = reactApplicationContext
 

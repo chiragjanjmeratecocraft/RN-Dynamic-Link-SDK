@@ -1,5 +1,5 @@
 import { API_ROUTES, BASE_URL, TIMEOUT_DURATION } from './constants';
-import { IDynamicLinkResponse } from './types';
+import { IDynamicLinkResponse } from './types/common';
 
 export async function fetchDynamicLink(
   shortCode: string

@@ -30,8 +30,3 @@ export interface ISmartLinkingOptions {
   onFallback?: (url: string) => void;
   onUrl?: (url: string) => void;
 }
-
-export interface InstallReferrerResult {
-  raw: string;
-  utmCampaign: string | null;
-}
