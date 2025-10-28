@@ -70,10 +70,9 @@ repositories {
 }
 
 def kotlin_version = getExtOrDefault("kotlinVersion")
-def installreferrer_version = getExtOrDefault("installreferrerVersion")
 
 dependencies {
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "com.android.installreferrer:installreferrer:$installreferrer_version"
+  implementation "com.android.installreferrer:installreferrer:2.2"
 }
