@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { InstallReferrerResult, ISmartLinkingOptions } from './types';
 import { extractShortCode, fetchDynamicLink } from './utils';
 import { Linking } from 'react-native';
-import RNDynamicLinking from './native/RNDynamicLinking';
+import RNDynamicLinking from './specs/NativeRNDynamicLinkingSpec';
 
 export function useSmartLinking(options: ISmartLinkingOptions = {}) {
   const { onSuccess, onError, onFallback, onUrl } = options;

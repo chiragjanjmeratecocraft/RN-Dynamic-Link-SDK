@@ -19,7 +19,9 @@
     "lint": "eslint src --ext .ts,.tsx",
     "type-check": "tsc --noEmit",
     "test": "jest",
-    "dev": "tsup src/index.ts --format esm,cjs --watch"
+    "dev": "tsup src/index.ts --format esm,cjs --watch",
+    "prepublishOnly": "npm run codegen:android",
+    "codegen:android": "react-native-codegen generate-specs --platform android --output android/src/main/java/com/rndynamiclinking/ --libraryName RNDynamicLinking --schemaPath src/specs"
   },
   "keywords": [
     "react-native",
@@ -75,6 +77,12 @@
   "prettier": {
     "singleQuote": true,
     "trailingComma": "es5"
+  },
+  "codegenConfig": {
+    "name": "RNDynamicLinking",
+    "type": "modules",
+    "jsSrcsDir": "src/specs",
+    "tsSrcsDir": "src/specs"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
