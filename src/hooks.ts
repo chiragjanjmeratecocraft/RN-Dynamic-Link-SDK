@@ -16,8 +16,12 @@ export function useSmartLinking(options: ISmartLinkingOptions = {}) {
     if (Platform.OS !== 'android') return;
     (() => {
       RNDynamicLinking?.getReferralCode()
-        .then((result: string | null) => {
-          console.log('RNDynamicLinking', result);
+        .then((shortCode: string | null) => {
+          if (shortCode) {
+            fetchDynamicLink(shortCode).then((data) => {
+              if (data && onSuccess) onSuccess(data);
+            });
+          }
         })
         .catch((err: any) => {
           console.warn('Install referrer failed:', err);
@@ -33,7 +37,7 @@ export function useSmartLinking(options: ISmartLinkingOptions = {}) {
 
       try {
         const data = await fetchDynamicLink(shortCode);
-        onSuccess?.(data);
+        if (data && onSuccess) onSuccess(data);
       } catch (err) {
         onError?.(err as Error);
       }

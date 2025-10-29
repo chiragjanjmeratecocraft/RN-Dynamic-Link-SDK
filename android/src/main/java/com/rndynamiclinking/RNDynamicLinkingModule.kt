@@ -14,18 +14,20 @@ class RNDynamicLinkingModule(reactContext: ReactApplicationContext) :
 
     private var referrerClient: InstallReferrerClient? = null
     private var hasFetched = false
+    private var pendingPromise: Promise? = null
 
     override fun getName(): String = NAME
 
     @ReactMethod
     fun getReferralCode(promise: Promise) {
-        // Prevent duplicate calls
-        if (hasFetched) {
-            promise.resolve(null)
+        // Block duplicate calls
+        if (hasFetched || referrerClient != null) {
+            pendingPromise = promise
             return
         }
 
         hasFetched = true
+        pendingPromise = promise
         val context = reactApplicationContext
 
         referrerClient = InstallReferrerClient.newBuilder(context).build()
@@ -34,29 +36,51 @@ class RNDynamicLinkingModule(reactContext: ReactApplicationContext) :
                 when (responseCode) {
                     InstallReferrerClient.InstallReferrerResponse.OK -> {
                         try {
-                            val raw = referrerClient?.installReferrer?.installReferrer.orEmpty()
-                            val code = if (raw.isNotBlank()) raw else null
-                            promise.resolve(code)
+                            val raw = referrerClient?.installReferrer?.installReferrer.orEmpty().trim()
+
+                            // BLOCK organic / default values
+                            if (isOrganicReferrer(raw)) {
+                                // Do nothing — no resolve
+                            } else if (raw.isNotBlank()) {
+                                // Only resolve with REAL codes
+                                pendingPromise?.resolve(raw)
+                            }
+                            // Else: no code → do nothing
                         } catch (e: Exception) {
-                            promise.resolve(null)
+                            // Silent
                         } finally {
-                            referrerClient?.endConnection()
-                            referrerClient = null
+                            cleanup()
                         }
                     }
                     else -> {
-                        promise.resolve(null)
-                        referrerClient?.endConnection()
+                        cleanup()
                     }
                 }
             }
 
-            override fun onInstallReferrerServiceDisconnected() {}
+            override fun onInstallReferrerServiceDisconnected() {
+                cleanup()
+            }
         })
+    }
+
+    private fun cleanup() {
+        referrerClient?.endConnection()
+        referrerClient = null
+        pendingPromise = null
+    }
+
+    // BLOCK organic & default referrer strings
+    private fun isOrganicReferrer(referrer: String): Boolean {
+        return referrer.isBlank() ||
+                referrer.contains("utm_source=google-play") ||
+                referrer.contains("utm_medium=organic") ||
+                referrer.contains("com.android.browser") ||
+                referrer.contains("com.android.vending") ||
+                referrer.startsWith("utm_") // any UTM param
     }
 
     companion object {
         const val NAME = "RNDynamicLinking"
-        private const val TAG = "RNDynamicLinking"
     }
 }
