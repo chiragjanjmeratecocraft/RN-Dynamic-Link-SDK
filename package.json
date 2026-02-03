@@ -5,15 +5,11 @@
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "files": [
-    "src",
     "lib"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "lint": "eslint src --ext .ts,.tsx",
-    "type-check": "tsc --noEmit",
-    "test": "jest",
-    "dev": "tsup src/index.ts --format esm,cjs --watch"
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "react-native",
