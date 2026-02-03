@@ -27,6 +27,5 @@ interface Project {
 export interface ISmartLinkingOptions {
   onSuccess?: (data: IDynamicLinkResponse) => void;
   onError?: (error: Error) => void;
-  onFallback?: (url: string) => void;
   onUrl?: (url: string) => void;
 }

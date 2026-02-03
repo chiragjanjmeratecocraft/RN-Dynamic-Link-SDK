@@ -1,45 +1,42 @@
 import { useEffect } from 'react';
 import type { ISmartLinkingOptions } from './types/common';
-import { extractShortCode, fetchDynamicLink } from './utils';
-import { Linking, Platform } from 'react-native';
-import type { RNDynamicLinkingNativeModule } from './types/native';
-import { NativeModules } from 'react-native';
-
-const { RNDynamicLinking } = NativeModules as {
-  RNDynamicLinking: RNDynamicLinkingNativeModule;
-};
+import { extractShortCode, fetchDynamicLink, trackPendingRedirect } from './utils';
+import { Linking } from 'react-native';
+import { STORAGE_KEYS } from './constants';
+import { getData, storeData } from './storage';
 
 export function useSmartLinking(options: ISmartLinkingOptions = {}) {
-  const { onSuccess, onError, onFallback, onUrl } = options;
 
   useEffect(() => {
-    if (Platform.OS !== 'android') return;
-    (() => {
-      RNDynamicLinking?.getReferralCode()
-        .then((shortCode: string | null) => {
-          if (shortCode) {
-            fetchDynamicLink(shortCode).then((data) => {
-              if (data && onSuccess) onSuccess(data);
-            });
-          }
-        })
-        .catch((err: any) => {
-          console.warn('Install referrer failed:', err);
-        });
-    })();
-  }, []);
+    (async () => {
+      try {
+        const isFirstInstall = await getData(STORAGE_KEYS.HAS_FIRST_INSTALL);
+        if (isFirstInstall) return;
+
+        // Call trackPendingRedirect on first install
+        const data = await trackPendingRedirect();
+        if (data && options.onSuccess) {
+          options.onSuccess(data);
+        }
+
+        await storeData(STORAGE_KEYS.HAS_FIRST_INSTALL, 'true');
+      } catch (err) {
+        options.onError?.(err as Error);
+      }
+    })()
+  }, [options]);
 
   useEffect(() => {
     async function handleUrl(url: string) {
-      onUrl?.(url);
+      options.onUrl?.(url);
       const shortCode = extractShortCode(url);
       if (!shortCode) return;
 
       try {
         const data = await fetchDynamicLink(shortCode);
-        if (data && onSuccess) onSuccess(data);
+        if (data && options.onSuccess) options.onSuccess(data);
       } catch (err) {
-        onError?.(err as Error);
+        options.onError?.(err as Error);
       }
     }
 
@@ -54,5 +51,5 @@ export function useSmartLinking(options: ISmartLinkingOptions = {}) {
     });
 
     return () => sub.remove();
-  }, [onSuccess, onError, onFallback, onUrl]);
+  }, [options]);
 }

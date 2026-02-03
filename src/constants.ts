@@ -6,7 +6,7 @@ export const API_ROUTES = {
 }
 
 export const TIMEOUT_DURATION = 10000;
+
 export const STORAGE_KEYS = {
-    HAS_LAUNCHED: 'hasLaunched',
-    DYNAMIC_LINK: 'dynamicLink',
+    HAS_FIRST_INSTALL: "@storage.hasFirstInstall"
 }
